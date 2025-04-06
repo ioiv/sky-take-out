@@ -21,8 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 @Service
 @Slf4j
@@ -104,5 +104,54 @@ public class DishServiceImpl implements DishService {
 
         dishMapper.deleteById(ids);
         dishFlavorMapper.deleteByDishId(ids);
+    }
+
+    /**
+     * 菜品数据修改
+     * @param dishDTO
+     */
+    @Override
+    public void reviseDish(DishDTO dishDTO) {
+        Dish dish = new Dish();
+        BeanUtils.copyProperties(dishDTO, dish);
+        // 修改基本的菜品表
+        dishMapper.updata(dish);
+        // 修改对应的口味表
+        // 删除之前的口味列表
+        List<Long> dishId = new ArrayList<>();
+        dishId.add(dish.getId());
+        dishFlavorMapper.deleteByDishId(dishId);
+        // 插入现在的口味列表
+        List<DishFlavor> flavors = dishDTO.getFlavors();
+        if (flavors != null && flavors.size() > 0) {
+            flavors.forEach(dishFlavor -> {
+                dishFlavor.setDishId(dishDTO.getId());
+            });
+            dishFlavorMapper.insertBatch(flavors);
+        }
+
+    }
+
+    /**
+     * 根据id查询菜品及其关联的口味数据
+     * @param id
+     * @return
+     */
+    @Override
+    public DishVO findByIdWithFlavor(Long id) {
+        // 根据id查询菜品数据
+        Dish dish = dishMapper.getById(id);
+        // 根据菜品id查询口味数据
+        List<DishFlavor> dishFlavors = dishFlavorMapper.getByDishId(id);
+        // 封装到dishVo
+        DishVO dishVO = new DishVO();
+        BeanUtils.copyProperties(dish, dishVO);
+        dishVO.setFlavors(dishFlavors);
+        return dishVO;
+    }
+
+    @Override
+    public void reviseStatus(Integer status, Long id) {
+        dishMapper.reviseStatus(status,id);
     }
 }
