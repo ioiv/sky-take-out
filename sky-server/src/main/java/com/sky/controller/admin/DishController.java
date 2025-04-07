@@ -87,9 +87,15 @@ public class DishController {
         return Result.success();
     }
 
-
+    /**
+     * 菜品起售停售
+     * @param status
+     * @param id
+     * @return
+     */
     @PostMapping("/status/{status}")
     public Result reviseStatus(@PathVariable Integer status, @RequestParam(value = "id", required = false) Long id){
+        log.info("修改菜品起售停售: {}, {}", status, id);
         dishService.reviseStatus(status,id);
         return Result.success();
     }
