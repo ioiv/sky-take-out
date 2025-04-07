@@ -45,7 +45,7 @@ public class DishController {
     @ApiOperation("菜品分页查询")
     public Result<PageResult> page(DishPageQueryDTO dishPageQueryDTO){
         log.info("分页查询:{}",dishPageQueryDTO);
-        PageResult pageResult = dishService.PageQuery(dishPageQueryDTO);
+        PageResult pageResult = dishService.pageQuery(dishPageQueryDTO);
         return Result.success(pageResult);
     }
 
@@ -95,6 +95,7 @@ public class DishController {
      * @return
      */
     @PostMapping("/status/{status}")
+    @ApiOperation("菜品起售停售")
     public Result reviseStatus(@PathVariable Integer status, @RequestParam(value = "id", required = false) Long id){
         log.info("修改菜品起售停售: {}, {}", status, id);
         dishService.reviseStatus(status,id);
@@ -106,6 +107,7 @@ public class DishController {
      * @return
      */
     @GetMapping("/list")
+    @ApiOperation("根据分类id查询菜品")
     public Result<List<Dish>> list(@RequestParam(value = "categoryId") Long categoryId){
         log.info("根据分类id查询菜品:{}", categoryId);
         List<Dish> dishList = dishService.list(categoryId);

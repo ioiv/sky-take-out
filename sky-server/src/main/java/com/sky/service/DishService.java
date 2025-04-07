@@ -20,7 +20,7 @@ public interface DishService {
      * @param dishPageQueryDTO
      * @return
      */
-    PageResult PageQuery(DishPageQueryDTO dishPageQueryDTO);
+    PageResult pageQuery(DishPageQueryDTO dishPageQueryDTO);
 
     /**
      * 菜品批量删除
